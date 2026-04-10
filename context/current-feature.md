@@ -19,3 +19,5 @@ Not Started
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+- **Initial Setup** — Next.js 16, Tailwind CSS v4, Typescript Configured (Completed)
