@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
 import {
   Code,
   Sparkles,
@@ -112,6 +113,11 @@ export function Sidebar({
                   {!collapsed && (
                     <>
                       <span className="flex-1">{type.name}</span>
+                      {type.isPro && (
+                        <Badge variant="outline" className="h-4 px-1 text-[10px] font-medium text-muted-foreground border-muted-foreground/30">
+                          PRO
+                        </Badge>
+                      )}
                       <span className="text-xs tabular-nums">{type.count}</span>
                     </>
                   )}

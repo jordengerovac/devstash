@@ -88,6 +88,7 @@ export interface SidebarItemType {
   icon: string | null;
   color: string | null;
   count: number;
+  isPro: boolean;
 }
 
 export async function getSystemItemTypesWithCounts(userId: string): Promise<SidebarItemType[]> {
@@ -101,12 +102,15 @@ export async function getSystemItemTypesWithCounts(userId: string): Promise<Side
     },
   });
 
+  const PRO_TYPE_NAMES = new Set(['File', 'Image']);
+
   return itemTypes.map((type) => ({
     id: type.id,
     name: type.name,
     icon: type.icon,
     color: type.color,
     count: type.items.length,
+    isPro: PRO_TYPE_NAMES.has(type.name),
   }));
 }
 
