@@ -4,7 +4,7 @@ A developer knowledge hub for snippets, commands, prompts, notes, files, images,
 
 ## Context Files
 
-Read the follownig to get the full context of the project:
+Read the following to get the full context of the project:
 
 - @context/project-overview.md
 - @context/coding-standards.md
@@ -13,8 +13,16 @@ Read the follownig to get the full context of the project:
 
 ## Commands
 
-```bash
-npm run dev      # Start development server at localhost:3000
-npm run build    # Production build
-npm run lint     # Run ESLint
-```
+- **Dev server**: `npm run dev` (runs on http://localhost:3000)
+- **Build**: `npm run build`
+- **Production server**: `npm run start`
+- **Lint**: `npm run lint`
+- **Test**: `npm run test` (single run)
+- **Test watch**: `npm run test:watch`
+
+## Neon MCP
+
+- Always use the **devstash** project when interacting with Neon MCP.
+- Always use the **development** branch by default.
+- **NEVER** read from or write to the production branch unless I explicitly say so in the message.
+- If a Neon operation would affect a branch other than development, ask for confirmation before proceeding.
