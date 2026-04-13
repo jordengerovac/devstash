@@ -1,11 +1,13 @@
 import { Pin } from 'lucide-react';
-import { mockItems, mockItemTypes } from '@/lib/mock-data';
+import { getDemoPinnedItems } from '@/lib/db/items';
 import { ItemRow } from './ItemRow';
 
-export function PinnedItems() {
-  const pinnedItems = mockItems.filter((item) => item.isPinned);
+export async function PinnedItems() {
+  const pinnedItems = await getDemoPinnedItems();
 
   if (pinnedItems.length === 0) return null;
+
+  const itemTypes = [...new Map(pinnedItems.map((i) => [i.type.id, i.type])).values()];
 
   return (
     <section>
@@ -15,7 +17,7 @@ export function PinnedItems() {
       </div>
       <div className="border border-border rounded-lg divide-y divide-border overflow-hidden">
         {pinnedItems.map((item) => (
-          <ItemRow key={item.id} item={item} itemTypes={mockItemTypes} />
+          <ItemRow key={item.id} item={item} itemTypes={itemTypes} />
         ))}
       </div>
     </section>

@@ -29,7 +29,7 @@ function formatDate(dateStr: string) {
 interface Item {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
   typeId: string;
   isFavorite: boolean;
   tags: string[];
@@ -39,8 +39,8 @@ interface Item {
 interface ItemType {
   id: string;
   name: string;
-  icon: string;
-  color: string;
+  icon: string | null;
+  color: string | null;
 }
 
 interface ItemRowProps {

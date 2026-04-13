@@ -1,11 +1,11 @@
 import { Clock } from 'lucide-react';
-import { mockItems, mockItemTypes } from '@/lib/mock-data';
+import { getDemoRecentItems } from '@/lib/db/items';
 import { ItemRow } from './ItemRow';
 
-export function RecentItems() {
-  const recentItems = [...mockItems]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 10);
+export async function RecentItems() {
+  const recentItems = await getDemoRecentItems();
+
+  const itemTypes = [...new Map(recentItems.map((i) => [i.type.id, i.type])).values()];
 
   return (
     <section>
@@ -15,7 +15,7 @@ export function RecentItems() {
       </div>
       <div className="border border-border rounded-lg divide-y divide-border overflow-hidden">
         {recentItems.map((item) => (
-          <ItemRow key={item.id} item={item} itemTypes={mockItemTypes} />
+          <ItemRow key={item.id} item={item} itemTypes={itemTypes} />
         ))}
       </div>
     </section>
