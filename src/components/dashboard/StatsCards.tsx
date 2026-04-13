@@ -1,12 +1,14 @@
 import { Layers, FolderOpen, Star, Bookmark } from 'lucide-react';
-import { mockStats } from '@/lib/mock-data';
+import { getDemoDashboardStats } from '@/lib/db/items';
 
-export function StatsCards() {
+export async function StatsCards() {
+  const data = await getDemoDashboardStats();
+
   const stats = [
-    { label: 'Items', value: mockStats.totalItems, icon: Layers },
-    { label: 'Collections', value: mockStats.totalCollections, icon: FolderOpen },
-    { label: 'Favorite Items', value: mockStats.favoriteItems, icon: Star },
-    { label: 'Favorite Collections', value: mockStats.favoriteCollections, icon: Bookmark },
+    { label: 'Items', value: data.totalItems, icon: Layers },
+    { label: 'Collections', value: data.totalCollections, icon: FolderOpen },
+    { label: 'Favorite Items', value: data.favoriteItems, icon: Star },
+    { label: 'Favorite Collections', value: data.favoriteCollections, icon: Bookmark },
   ];
 
   return (
