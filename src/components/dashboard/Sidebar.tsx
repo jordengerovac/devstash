@@ -3,13 +3,6 @@
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import {
-  Code,
-  Sparkles,
-  StickyNote,
-  Terminal,
-  Link as LinkIcon,
-  File,
-  Image as ImageIcon,
   Star,
   PanelLeftClose,
   PanelLeftOpen,
@@ -17,18 +10,9 @@ import {
   X,
 } from 'lucide-react';
 import { mockUser } from '@/lib/mock-data';
+import { getItemTypeIcon } from '@/lib/item-type-icons';
 import type { SidebarItemType } from '@/lib/db/items';
 import type { CollectionWithMeta } from '@/lib/db/collections';
-
-const iconMap: Record<string, React.ElementType> = {
-  Code,
-  Sparkles,
-  StickyNote,
-  Terminal,
-  Link: LinkIcon,
-  File,
-  Image: ImageIcon,
-};
 
 interface SidebarProps {
   collapsed: boolean;
@@ -95,7 +79,7 @@ export function Sidebar({
           )}
           <nav className="space-y-0.5">
             {itemTypes.map((type) => {
-              const Icon = iconMap[type.icon ?? ''] ?? File;
+              const Icon = getItemTypeIcon(type.icon);
               const slug = type.name.toLowerCase() + 's';
               return (
                 <Link

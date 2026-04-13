@@ -1,23 +1,5 @@
-import {
-  Star,
-  Code,
-  Sparkles,
-  StickyNote,
-  Terminal,
-  Link as LinkIcon,
-  File,
-  Image as ImageIcon,
-} from 'lucide-react';
-
-const iconMap: Record<string, React.ElementType> = {
-  Code,
-  Sparkles,
-  StickyNote,
-  Terminal,
-  Link: LinkIcon,
-  File,
-  Image: ImageIcon,
-};
+import { Star } from 'lucide-react';
+import { getItemTypeIcon } from '@/lib/item-type-icons';
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('en-US', {
@@ -50,7 +32,7 @@ interface ItemRowProps {
 
 export function ItemRow({ item, itemTypes }: ItemRowProps) {
   const type = itemTypes.find((t) => t.id === item.typeId);
-  const Icon = type ? (iconMap[type.icon ?? ''] ?? File) : File;
+  const Icon = getItemTypeIcon(type?.icon);
 
   return (
     <div className="flex items-start gap-3 py-3 px-4 hover:bg-muted/30 transition-colors cursor-pointer">

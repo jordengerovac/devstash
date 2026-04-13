@@ -1,25 +1,6 @@
-import {
-  MoreHorizontal,
-  Star,
-  Code,
-  Sparkles,
-  StickyNote,
-  Terminal,
-  Link as LinkIcon,
-  File,
-  Image as ImageIcon,
-} from 'lucide-react';
+import { MoreHorizontal, Star } from 'lucide-react';
+import { getItemTypeIcon } from '@/lib/item-type-icons';
 import type { CollectionWithMeta } from '@/lib/db/collections';
-
-const iconMap: Record<string, React.ElementType> = {
-  Code,
-  Sparkles,
-  StickyNote,
-  Terminal,
-  Link: LinkIcon,
-  File,
-  Image: ImageIcon,
-};
 
 interface CollectionCardProps {
   collection: CollectionWithMeta;
@@ -51,7 +32,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
       <p className="text-xs text-muted-foreground/60 mb-4 line-clamp-1">{collection.description}</p>
       <div className="flex items-center gap-1.5">
         {collection.previewTypes.slice(0, 4).map((type) => {
-          const Icon = iconMap[type.icon ?? ''] ?? File;
+          const Icon = getItemTypeIcon(type.icon);
           return (
             <div
               key={type.id}

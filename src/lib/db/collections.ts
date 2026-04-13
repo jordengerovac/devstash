@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 
 export interface CollectionType {
@@ -23,12 +24,15 @@ export async function getCollections(userId: string): Promise<CollectionWithMeta
     orderBy: { updatedAt: 'desc' },
     include: {
       items: {
+        take: 20,
+        orderBy: { addedAt: 'desc' },
         include: {
           item: {
             include: { type: true },
           },
         },
       },
+      _count: { select: { items: true } },
     },
   });
 
@@ -52,7 +56,7 @@ export async function getCollections(userId: string): Promise<CollectionWithMeta
       name: collection.name,
       description: collection.description,
       isFavorite: collection.isFavorite,
-      itemCount: collection.items.length,
+      itemCount: collection._count.items,
       dominantType: sorted[0]?.type ?? null,
       previewTypes: sorted.map((e) => e.type),
     };
@@ -60,7 +64,7 @@ export async function getCollections(userId: string): Promise<CollectionWithMeta
 }
 
 // Temporary: uses demo user until auth is wired up
-export async function getDemoCollections(): Promise<CollectionWithMeta[]> {
+export const getDemoCollections = cache(async (): Promise<CollectionWithMeta[]> => {
   const user = await prisma.user.findUnique({
     where: { email: 'demo@devstash.io' },
     select: { id: true },
@@ -69,4 +73,4 @@ export async function getDemoCollections(): Promise<CollectionWithMeta[]> {
   if (!user) return [];
 
   return getCollections(user.id);
-}
+});

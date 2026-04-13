@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 
 export interface ItemType {
@@ -115,13 +116,13 @@ export async function getSystemItemTypesWithCounts(userId: string): Promise<Side
 }
 
 // Temporary: uses demo user until auth is wired up
-async function getDemoUserId(): Promise<string | null> {
+const getDemoUserId = cache(async (): Promise<string | null> => {
   const user = await prisma.user.findUnique({
     where: { email: 'demo@devstash.io' },
     select: { id: true },
   });
   return user?.id ?? null;
-}
+});
 
 export async function getDemoPinnedItems(): Promise<ItemWithMeta[]> {
   const userId = await getDemoUserId();

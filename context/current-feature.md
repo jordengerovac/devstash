@@ -1,10 +1,21 @@
 # Current Feature
 
 ## Status
+In Progress
 
 ## Goals
+Fix the top 3 priority issues identified in the code audit:
+
+1. **Wrap `getDemoUserId` and `getDemoCollections` with React `cache()`** — eliminates 4–5 redundant DB queries per page load. Both functions are called independently by multiple components on the same render pass.
+
+2. **Add `take` limit + `_count` to `getCollections`** — currently fetches every item with full type data for every collection, unbounded. Replace with `take: 20` on the items include and `_count: { select: { items: true } }` for the item count.
+
+3. **Extract `iconMap` to a shared utility** — the same `iconMap` object is copy-pasted in `Sidebar.tsx`, `ItemRow.tsx`, and `CollectionCard.tsx`. Extract to `src/lib/item-type-icons.ts` and import from a single source of truth.
 
 ## Notes
+- React `cache()` deduplicates identical calls within a single server render pass — the fix for issues 1 is a one-liner per function
+- For issue 2, use `collection._count.items` for the item count display instead of `collection.items.length`
+- For issue 3, export a `getItemTypeIcon(iconName)` helper from the shared file so components don't access `iconMap` directly
 
 ## History
 
