@@ -9,6 +9,7 @@ import {
   File,
   Image as ImageIcon,
 } from 'lucide-react';
+import type { CollectionWithMeta } from '@/lib/db/collections';
 
 const iconMap: Record<string, React.ElementType> = {
   Code,
@@ -20,30 +21,18 @@ const iconMap: Record<string, React.ElementType> = {
   Image: ImageIcon,
 };
 
-interface Collection {
-  id: string;
-  name: string;
-  description: string;
-  isFavorite: boolean;
-  itemCount: number;
-  previewTypeIds: string[];
-}
-
-interface ItemType {
-  id: string;
-  name: string;
-  icon: string;
-  color: string;
-}
-
 interface CollectionCardProps {
-  collection: Collection;
-  itemTypes: ItemType[];
+  collection: CollectionWithMeta;
 }
 
-export function CollectionCard({ collection, itemTypes }: CollectionCardProps) {
+export function CollectionCard({ collection }: CollectionCardProps) {
+  const borderColor = collection.dominantType?.color ?? 'var(--border)';
+
   return (
-    <div className="bg-card border border-border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer">
+    <div
+      className="bg-card border border-border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer border-l-[3px]"
+      style={{ borderLeftColor: borderColor }}
+    >
       <div className="flex items-start justify-between gap-2 mb-1">
         <div className="flex items-center gap-1.5 min-w-0">
           <h3 className="text-sm font-medium truncate">{collection.name}</h3>
@@ -61,17 +50,15 @@ export function CollectionCard({ collection, itemTypes }: CollectionCardProps) {
       <p className="text-xs text-muted-foreground mb-2">{collection.itemCount} items</p>
       <p className="text-xs text-muted-foreground/60 mb-4 line-clamp-1">{collection.description}</p>
       <div className="flex items-center gap-1.5">
-        {collection.previewTypeIds.slice(0, 4).map((typeId) => {
-          const type = itemTypes.find((t) => t.id === typeId);
-          if (!type) return null;
+        {collection.previewTypes.slice(0, 4).map((type) => {
           const Icon = iconMap[type.icon ?? ''] ?? File;
           return (
             <div
-              key={typeId}
+              key={type.id}
               className="w-5 h-5 rounded flex items-center justify-center"
               style={{ backgroundColor: `${type.color}25` }}
             >
-              <Icon className="h-3 w-3" style={{ color: type.color }} />
+              <Icon className="h-3 w-3" style={{ color: type.color ?? undefined }} />
             </div>
           );
         })}
