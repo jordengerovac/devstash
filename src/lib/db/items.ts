@@ -82,6 +82,34 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
   return { totalItems, totalCollections, favoriteItems, favoriteCollections };
 }
 
+export interface SidebarItemType {
+  id: string;
+  name: string;
+  icon: string | null;
+  color: string | null;
+  count: number;
+}
+
+export async function getSystemItemTypesWithCounts(userId: string): Promise<SidebarItemType[]> {
+  const itemTypes = await prisma.itemType.findMany({
+    where: { isSystem: true },
+    include: {
+      items: {
+        where: { userId },
+        select: { id: true },
+      },
+    },
+  });
+
+  return itemTypes.map((type) => ({
+    id: type.id,
+    name: type.name,
+    icon: type.icon,
+    color: type.color,
+    count: type.items.length,
+  }));
+}
+
 // Temporary: uses demo user until auth is wired up
 async function getDemoUserId(): Promise<string | null> {
   const user = await prisma.user.findUnique({
@@ -107,4 +135,10 @@ export async function getDemoDashboardStats(): Promise<DashboardStats> {
   const userId = await getDemoUserId();
   if (!userId) return { totalItems: 0, totalCollections: 0, favoriteItems: 0, favoriteCollections: 0 };
   return getDashboardStats(userId);
+}
+
+export async function getDemoSystemItemTypesWithCounts(): Promise<SidebarItemType[]> {
+  const userId = await getDemoUserId();
+  if (!userId) return [];
+  return getSystemItemTypesWithCounts(userId);
 }

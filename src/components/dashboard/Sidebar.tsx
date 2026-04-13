@@ -15,12 +15,9 @@ import {
   Settings,
   X,
 } from 'lucide-react';
-import {
-  mockUser,
-  mockItemTypes,
-  mockCollections,
-  mockTypeCounts,
-} from '@/lib/mock-data';
+import { mockUser } from '@/lib/mock-data';
+import type { SidebarItemType } from '@/lib/db/items';
+import type { CollectionWithMeta } from '@/lib/db/collections';
 
 const iconMap: Record<string, React.ElementType> = {
   Code,
@@ -37,6 +34,8 @@ interface SidebarProps {
   onToggleCollapse: () => void;
   mobileOpen: boolean;
   onMobileClose: () => void;
+  itemTypes: SidebarItemType[];
+  collections: CollectionWithMeta[];
 }
 
 export function Sidebar({
@@ -44,9 +43,11 @@ export function Sidebar({
   onToggleCollapse,
   mobileOpen,
   onMobileClose,
+  itemTypes,
+  collections,
 }: SidebarProps) {
-  const favoriteCollections = mockCollections.filter((c) => c.isFavorite);
-  const recentCollections = mockCollections.filter((c) => !c.isFavorite);
+  const favoriteCollections = collections.filter((c) => c.isFavorite);
+  const recentCollections = collections.filter((c) => !c.isFavorite);
 
   const userInitials = mockUser.name
     .split(' ')
@@ -92,10 +93,9 @@ export function Sidebar({
             </p>
           )}
           <nav className="space-y-0.5">
-            {mockItemTypes.map((type) => {
+            {itemTypes.map((type) => {
               const Icon = iconMap[type.icon ?? ''] ?? File;
               const slug = type.name.toLowerCase() + 's';
-              const count = mockTypeCounts[type.id] ?? 0;
               return (
                 <Link
                   key={type.id}
@@ -107,12 +107,12 @@ export function Sidebar({
                 >
                   <Icon
                     className="h-3.5 w-3.5 shrink-0"
-                    style={{ color: type.color }}
+                    style={{ color: type.color ?? undefined }}
                   />
                   {!collapsed && (
                     <>
                       <span className="flex-1">{type.name}</span>
-                      <span className="text-xs tabular-nums">{count}</span>
+                      <span className="text-xs tabular-nums">{type.count}</span>
                     </>
                   )}
                 </Link>
@@ -129,38 +129,57 @@ export function Sidebar({
             </p>
 
             {/* Favorites */}
-            <p className="text-xs text-muted-foreground/60 px-2 mb-0.5 mt-2">
-              Favorites
-            </p>
-            <nav className="space-y-0.5 mb-3">
-              {favoriteCollections.map((col) => (
-                <Link
-                  key={col.id}
-                  href={`/collections/${col.id}`}
-                  className="flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-                >
-                  <Star className="h-3.5 w-3.5 shrink-0 fill-yellow-400 text-yellow-400" />
-                  <span className="flex-1 truncate">{col.name}</span>
-                </Link>
-              ))}
-            </nav>
+            {favoriteCollections.length > 0 && (
+              <>
+                <p className="text-xs text-muted-foreground/60 px-2 mb-0.5 mt-2">
+                  Favorites
+                </p>
+                <nav className="space-y-0.5 mb-3">
+                  {favoriteCollections.map((col) => (
+                    <Link
+                      key={col.id}
+                      href={`/collections/${col.id}`}
+                      className="flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                    >
+                      <Star className="h-3.5 w-3.5 shrink-0 fill-yellow-400 text-yellow-400" />
+                      <span className="flex-1 truncate">{col.name}</span>
+                    </Link>
+                  ))}
+                </nav>
+              </>
+            )}
 
-            {/* All Collections (most recent) */}
-            <p className="text-xs text-muted-foreground/60 px-2 mb-0.5">
-              All Collections
-            </p>
-            <nav className="space-y-0.5">
-              {recentCollections.map((col) => (
-                <Link
-                  key={col.id}
-                  href={`/collections/${col.id}`}
-                  className="flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-                >
-                  <span className="flex-1 truncate">{col.name}</span>
-                  <span className="text-xs tabular-nums">{col.itemCount}</span>
-                </Link>
-              ))}
-            </nav>
+            {/* Recent Collections */}
+            {recentCollections.length > 0 && (
+              <>
+                <p className="text-xs text-muted-foreground/60 px-2 mb-0.5">
+                  Recent
+                </p>
+                <nav className="space-y-0.5">
+                  {recentCollections.map((col) => (
+                    <Link
+                      key={col.id}
+                      href={`/collections/${col.id}`}
+                      className="flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                    >
+                      <span
+                        className="w-2 h-2 rounded-full shrink-0"
+                        style={{ backgroundColor: col.dominantType?.color ?? '#6b7280' }}
+                      />
+                      <span className="flex-1 truncate">{col.name}</span>
+                    </Link>
+                  ))}
+                </nav>
+              </>
+            )}
+
+            {/* View all collections */}
+            <Link
+              href="/collections"
+              className="flex items-center px-2 py-1.5 mt-1 rounded-md text-xs text-muted-foreground/70 hover:text-foreground hover:bg-muted/50 transition-colors"
+            >
+              View all collections
+            </Link>
           </div>
         )}
       </div>
