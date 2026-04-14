@@ -91,6 +91,20 @@ export interface SidebarItemType {
   isPro: boolean;
 }
 
+export async function getItemsByType(
+  userId: string,
+  typeSlug: string,
+): Promise<{ items: ItemWithMeta[]; type: ItemType } | null> {
+  const typeName = typeSlug.charAt(0).toUpperCase() + typeSlug.slice(1, -1);
+  const itemType = await prisma.itemType.findFirst({
+    where: { isSystem: true, name: typeName },
+  });
+  if (!itemType) return null;
+
+  const items = await fetchItems(userId, { typeId: itemType.id });
+  return { items: items.map(mapItem), type: itemType };
+}
+
 export async function getSystemItemTypesWithCounts(userId: string): Promise<SidebarItemType[]> {
   const itemTypes = await prisma.itemType.findMany({
     where: { isSystem: true },
