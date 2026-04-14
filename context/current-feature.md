@@ -1,23 +1,10 @@
-# Current Feature: Email Verification Toggle
+# Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
 
-- Add an `EMAIL_VERIFICATION_ENABLED` env variable (`true` | `false`) that controls whether email verification is required
-- When disabled: skip token creation and email sending on register; set `emailVerified` on the user immediately so they can sign in right away
-- When disabled: skip the email-verified check in the `signIn` callback in `src/auth.ts`
-- When enabled: existing behavior is unchanged
-- Add the variable to `.env.example` (or `.env.local`) with a comment explaining its purpose
-
 ## Notes
-
-- Resend is not yet linked to a custom domain, so only the Resend account email can receive verification emails during development — disabling verification unblocks local testing with any email address
-- Touch points: `src/app/api/auth/register/route.ts` and `src/auth.ts`
-- A single helper `src/lib/email-verification.ts` (or inline check) reading `process.env.EMAIL_VERIFICATION_ENABLED !== "false"` keeps the flag in one place
-- No UI needed — this is a server-side / env-level toggle
 
 ## History
 
@@ -38,3 +25,4 @@ In Progress
 - **Auth Phase 2** — Credentials provider with email/password: bcrypt validation in auth.ts, Credentials placeholder in auth.config.ts for Edge safety, POST /api/auth/register with validation and hashing (Completed)
 - **Auth Phase 3** — Custom /sign-in and /register pages, reusable UserAvatar component (image or initials), sidebar user section with real session data and sign-out dropdown (Completed)
 - **Email Verification** — Resend integration: verification token generated on register, email sent with 24h link, /api/auth/verify-email validates and marks emailVerified, /verify-email and /email-verified pages, credentials sign-in blocked until verified (Completed)
+- **Email Verification Toggle** — EMAIL_VERIFICATION_ENABLED env flag: when false, users are auto-verified on register and signIn skips the verified check; defaults to enabled (Completed)
