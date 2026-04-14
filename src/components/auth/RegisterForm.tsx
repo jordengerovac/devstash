@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -46,6 +47,7 @@ export function RegisterForm() {
         return
       }
 
+      toast.success("Account created! You can now sign in.")
       router.push("/sign-in")
     } catch {
       setError("Something went wrong. Please try again.")
