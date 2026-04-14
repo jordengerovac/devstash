@@ -42,25 +42,35 @@ export async function POST(request: Request) {
     )
   }
 
+  const emailVerificationEnabled = process.env.EMAIL_VERIFICATION_ENABLED !== "false"
+
   const hashed = await bcrypt.hash(password, 12)
   const user = await prisma.user.create({
-    data: { name, email, password: hashed },
+    data: {
+      name,
+      email,
+      password: hashed,
+      // Mark as verified immediately when verification is disabled
+      ...(emailVerificationEnabled ? {} : { emailVerified: new Date() }),
+    },
     select: { id: true, name: true, email: true },
   })
 
-  // Create a verification token (expires in 24 hours)
-  const token = crypto.randomBytes(32).toString("hex")
-  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000)
+  if (emailVerificationEnabled) {
+    // Create a verification token (expires in 24 hours)
+    const token = crypto.randomBytes(32).toString("hex")
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000)
 
-  await prisma.verificationToken.create({
-    data: { identifier: email, token, expires },
-  })
+    await prisma.verificationToken.create({
+      data: { identifier: email, token, expires },
+    })
 
-  // Send verification email (non-blocking — user is created regardless)
-  try {
-    await sendVerificationEmail(email, token)
-  } catch (err) {
-    console.error("[register] Failed to send verification email:", err)
+    // Send verification email (non-blocking — user is created regardless)
+    try {
+      await sendVerificationEmail(email, token)
+    } catch (err) {
+      console.error("[register] Failed to send verification email:", err)
+    }
   }
 
   return NextResponse.json({ success: true, user }, { status: 201 })
