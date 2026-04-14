@@ -1,10 +1,23 @@
-# Current Feature
+# Current Feature: Email Verification Toggle
 
 ## Status
 
+In Progress
+
 ## Goals
 
+- Add an `EMAIL_VERIFICATION_ENABLED` env variable (`true` | `false`) that controls whether email verification is required
+- When disabled: skip token creation and email sending on register; set `emailVerified` on the user immediately so they can sign in right away
+- When disabled: skip the email-verified check in the `signIn` callback in `src/auth.ts`
+- When enabled: existing behavior is unchanged
+- Add the variable to `.env.example` (or `.env.local`) with a comment explaining its purpose
+
 ## Notes
+
+- Resend is not yet linked to a custom domain, so only the Resend account email can receive verification emails during development — disabling verification unblocks local testing with any email address
+- Touch points: `src/app/api/auth/register/route.ts` and `src/auth.ts`
+- A single helper `src/lib/email-verification.ts` (or inline check) reading `process.env.EMAIL_VERIFICATION_ENABLED !== "false"` keeps the flag in one place
+- No UI needed — this is a server-side / env-level toggle
 
 ## History
 

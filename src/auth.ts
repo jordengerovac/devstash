@@ -38,6 +38,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       // OAuth providers (e.g. GitHub) skip email verification
       if (account?.provider !== "credentials") return true
 
+      // Skip verification check when EMAIL_VERIFICATION_ENABLED=false
+      if (process.env.EMAIL_VERIFICATION_ENABLED === "false") return true
+
       // Block unverified credentials users
       const dbUser = await prisma.user.findUnique({
         where: { id: user.id! },
