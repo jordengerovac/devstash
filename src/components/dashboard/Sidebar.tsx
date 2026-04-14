@@ -1,18 +1,34 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Star,
   PanelLeftClose,
   PanelLeftOpen,
-  Settings,
+  LogOut,
+  User,
   X,
 } from 'lucide-react';
-import { mockUser } from '@/lib/mock-data';
+import { UserAvatar } from '@/components/auth/UserAvatar';
+import { signOutUser } from '@/actions/auth';
 import { getItemTypeIcon } from '@/lib/item-type-icons';
 import type { SidebarItemType } from '@/lib/db/items';
 import type { CollectionWithMeta } from '@/lib/db/collections';
+
+interface SidebarUser {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+}
 
 interface SidebarProps {
   collapsed: boolean;
@@ -21,6 +37,7 @@ interface SidebarProps {
   onMobileClose: () => void;
   itemTypes: SidebarItemType[];
   collections: CollectionWithMeta[];
+  user: SidebarUser;
 }
 
 export function Sidebar({
@@ -30,14 +47,11 @@ export function Sidebar({
   onMobileClose,
   itemTypes,
   collections,
+  user,
 }: SidebarProps) {
+  const router = useRouter();
   const favoriteCollections = collections.filter((c) => c.isFavorite);
   const recentCollections = collections.filter((c) => !c.isFavorite);
-
-  const userInitials = mockUser.name
-    .split(' ')
-    .map((n) => n[0])
-    .join('');
 
   const content = (
     <div className="flex flex-col h-full">
@@ -175,30 +189,43 @@ export function Sidebar({
       </div>
 
       {/* User Avatar Area */}
-      <div
-        className={`shrink-0 border-t border-border p-3 flex items-center gap-2.5 ${
-          collapsed ? 'justify-center' : ''
-        }`}
-      >
-        <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-xs font-medium text-primary-foreground shrink-0">
-          {userInitials}
-        </div>
-        {!collapsed && (
-          <>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium truncate">{mockUser.name}</p>
-              <p className="text-xs text-muted-foreground truncate">
-                {mockUser.email}
-              </p>
-            </div>
-            <button
-              className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors shrink-0"
-              aria-label="Settings"
+      <div className="shrink-0 border-t border-border p-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            className={`w-full flex items-center gap-2.5 px-1.5 py-1.5 rounded-md hover:bg-muted/50 transition-colors cursor-pointer ${
+              collapsed ? 'justify-center' : ''
+            }`}
+            aria-label="User menu"
+          >
+            <UserAvatar name={user.name} image={user.image} />
+            {!collapsed && (
+              <div className="flex-1 min-w-0 text-left">
+                <p className="text-xs font-medium truncate">{user.name ?? 'User'}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {user.email}
+                </p>
+              </div>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="top" align={collapsed ? 'center' : 'start'} className="w-48">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => router.push('/profile')}
             >
-              <Settings className="h-3.5 w-3.5" />
-            </button>
-          </>
-        )}
+              <User className="h-3.5 w-3.5" />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              variant="destructive"
+              className="cursor-pointer"
+              onClick={() => signOutUser()}
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

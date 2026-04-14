@@ -8,13 +8,20 @@ import { Sidebar } from './Sidebar';
 import type { SidebarItemType } from '@/lib/db/items';
 import type { CollectionWithMeta } from '@/lib/db/collections';
 
+interface DashboardShellUser {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+}
+
 interface DashboardShellProps {
   children: React.ReactNode;
   sidebarItemTypes: SidebarItemType[];
   sidebarCollections: CollectionWithMeta[];
+  user: DashboardShellUser;
 }
 
-export function DashboardShell({ children, sidebarItemTypes, sidebarCollections }: DashboardShellProps) {
+export function DashboardShell({ children, sidebarItemTypes, sidebarCollections, user }: DashboardShellProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -27,6 +34,7 @@ export function DashboardShell({ children, sidebarItemTypes, sidebarCollections 
         onMobileClose={() => setMobileOpen(false)}
         itemTypes={sidebarItemTypes}
         collections={sidebarCollections}
+        user={user}
       />
 
       <div className="flex flex-col flex-1 overflow-hidden min-w-0">

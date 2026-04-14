@@ -1,3 +1,4 @@
+import { auth } from '@/auth';
 import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { getDemoSystemItemTypesWithCounts } from '@/lib/db/items';
 import { getDemoCollections } from '@/lib/db/collections';
@@ -7,7 +8,8 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarItemTypes, sidebarCollections] = await Promise.all([
+  const [session, sidebarItemTypes, sidebarCollections] = await Promise.all([
+    auth(),
     getDemoSystemItemTypesWithCounts(),
     getDemoCollections(),
   ]);
@@ -16,6 +18,11 @@ export default async function DashboardLayout({
     <DashboardShell
       sidebarItemTypes={sidebarItemTypes}
       sidebarCollections={sidebarCollections}
+      user={{
+        name: session?.user?.name,
+        email: session?.user?.email,
+        image: session?.user?.image,
+      }}
     >
       {children}
     </DashboardShell>

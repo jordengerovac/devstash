@@ -1,4 +1,5 @@
 import NextAuth from "next-auth"
+import GitHub from "next-auth/providers/github"
 import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import bcrypt from "bcryptjs"
@@ -8,9 +9,11 @@ import authConfig from "./auth.config"
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
+  // Spread authConfig for pages, callbacks, etc. — but override providers
+  // to avoid duplicating the placeholder Credentials from auth.config.ts.
   ...authConfig,
   providers: [
-    ...authConfig.providers,
+    GitHub,
     Credentials({
       authorize: async (credentials) => {
         const { email, password } = credentials as {
