@@ -33,4 +33,19 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async signIn({ user, account }) {
+      // OAuth providers (e.g. GitHub) skip email verification
+      if (account?.provider !== "credentials") return true
+
+      // Block unverified credentials users
+      const dbUser = await prisma.user.findUnique({
+        where: { id: user.id! },
+        select: { emailVerified: true },
+      })
+
+      if (!dbUser?.emailVerified) return "/verify-email?error=unverified"
+      return true
+    },
+  },
 })
