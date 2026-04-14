@@ -10,8 +10,19 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { getItemTypeIcon } from '@/lib/item-type-icons';
-import { updateItem } from '@/actions/items';
+import { updateItem, deleteItem } from '@/actions/items';
 import type { ItemDetail } from '@/lib/db/items';
 
 function formatDate(dateStr: string) {
@@ -38,6 +49,8 @@ export function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
   // Edit mode state
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editContent, setEditContent] = useState('');
@@ -73,6 +86,21 @@ export function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
 
   function handleCancel() {
     setIsEditing(false);
+  }
+
+  async function handleDelete() {
+    if (!item) return;
+    setDeleting(true);
+    const result = await deleteItem(item.id);
+    setDeleting(false);
+    setDeleteConfirmOpen(false);
+    if (result.success) {
+      onClose();
+      router.refresh();
+      toast.success('Item deleted');
+    } else {
+      toast.error(result.error);
+    }
   }
 
   async function handleSave() {
@@ -189,11 +217,30 @@ export function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
                   <ActionButton icon={<Copy className="h-3.5 w-3.5" />} label="Copy" />
                   <ActionButton icon={<Pencil className="h-3.5 w-3.5" />} label="Edit" onClick={handleEdit} />
                   <div className="ml-auto">
-                    <ActionButton
-                      icon={<Trash2 className="h-3.5 w-3.5 text-destructive" />}
-                      label="Delete"
-                      destructive
-                    />
+                    <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+                      <AlertDialogTrigger className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors hover:bg-muted hover:text-destructive">
+                        <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                        Delete
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete &ldquo;{item.title}&rdquo;?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. The item will be permanently deleted.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDelete}
+                            disabled={deleting}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            {deleting ? 'Deleting…' : 'Delete'}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </>
               )}

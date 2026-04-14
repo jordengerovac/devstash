@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getClientIp, rateLimitErrorMessage } from "./rate-limit";
+import { getClientIp, rateLimitErrorMessage } from "@/lib/rate-limit";
 
 describe("getClientIp", () => {
   it("returns the first IP from x-forwarded-for header", () => {
