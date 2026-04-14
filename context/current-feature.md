@@ -1,40 +1,10 @@
-# Current Feature — Auth Phase 3: Sign In, Register & Sign Out UI
+# Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
 
-- Replace NextAuth default pages with custom `/sign-in` page (email/password + GitHub OAuth + link to register)
-- Build custom `/register` page (name, email, password, confirm password with validation)
-- Update bottom of sidebar: user avatar, name, dropdown with "Sign out", clicking avatar goes to `/profile`
-- Avatar shows GitHub image if available, otherwise initials fallback (e.g. "Brad Traversy" → "BT")
-- Create a reusable avatar component that handles both cases
-
 ## Notes
-
-### Sign In Page (`/sign-in`)
-- Email and password input fields
-- "Sign in with GitHub" button
-- Link to register page
-- Form validation and error display
-
-### Register Page (`/register`)
-- Name, email, password, confirm password fields
-- Form validation (passwords match, email format)
-- Submit to `/api/auth/register`
-- Redirect to sign-in on success
-
-### Bottom Of Sidebar
-- Display user avatar (GitHub image or initials fallback)
-- Display user name
-- Dropdown/up on avatar click with "Sign out" link
-- Clicking on the icon should go to "/profile"
-
-### Avatar Logic
-- If user has `image` (from GitHub): use that
-- Otherwise: generate initials from name (e.g., "Brad Traversy" → "BT")
 
 ## History
 
@@ -53,3 +23,4 @@ In Progress
 - **Code Audit Fixes** — Wrapped getDemoUserId and getDemoCollections with React cache() to eliminate redundant DB queries, added take:20 and _count to getCollections, extracted shared getItemTypeIcon utility replacing three duplicate iconMap declarations (Completed)
 - **Auth Phase 1** — NextAuth v5 with GitHub OAuth: split config pattern, Prisma adapter, JWT strategy, proxy-based dashboard route protection, Session type extension (Completed)
 - **Auth Phase 2** — Credentials provider with email/password: bcrypt validation in auth.ts, Credentials placeholder in auth.config.ts for Edge safety, POST /api/auth/register with validation and hashing (Completed)
+- **Auth Phase 3** — Custom /sign-in and /register pages, reusable UserAvatar component (image or initials), sidebar user section with real session data and sign-out dropdown (Completed)
