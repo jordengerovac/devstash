@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
+import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
 
 const PASSWORD_RESET_PREFIX = "password-reset:"
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request)
+  const { success, reset } = await rateLimit(`reset-password:${ip}`, 5, "15 m")
+  if (!success) return tooManyRequestsResponse(reset)
+
   const body = await request.json()
   const { token, password, confirmPassword } = body as {
     token?: string
