@@ -1,9 +1,9 @@
 import { Clock } from 'lucide-react';
-import { getDemoRecentItems } from '@/lib/db/items';
+import { getRecentItems } from '@/lib/db/items';
 import { ItemRow } from './ItemRow';
 
-export async function RecentItems() {
-  const recentItems = await getDemoRecentItems();
+export async function RecentItems({ userId }: { userId: string }) {
+  const recentItems = await getRecentItems(userId);
 
   const itemTypes = [...new Map(recentItems.map((i) => [i.type.id, i.type])).values()];
 

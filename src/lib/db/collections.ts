@@ -1,4 +1,3 @@
-import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 
 export interface CollectionType {
@@ -63,14 +62,3 @@ export async function getCollections(userId: string): Promise<CollectionWithMeta
   });
 }
 
-// Temporary: uses demo user until auth is wired up
-export const getDemoCollections = cache(async (): Promise<CollectionWithMeta[]> => {
-  const user = await prisma.user.findUnique({
-    where: { email: 'demo@devstash.io' },
-    select: { id: true },
-  });
-
-  if (!user) return [];
-
-  return getCollections(user.id);
-});

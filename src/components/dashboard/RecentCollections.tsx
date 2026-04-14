@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import { getDemoCollections } from '@/lib/db/collections';
+import { getCollections } from '@/lib/db/collections';
 import { CollectionCard } from './CollectionCard';
 
-export async function RecentCollections() {
-  const collections = await getDemoCollections();
+export async function RecentCollections({ userId }: { userId: string }) {
+  const collections = await getCollections(userId);
 
   return (
     <section>

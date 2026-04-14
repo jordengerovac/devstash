@@ -1,17 +1,22 @@
+import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { DashboardShell } from '@/components/dashboard/DashboardShell';
-import { getDemoSystemItemTypesWithCounts } from '@/lib/db/items';
-import { getDemoCollections } from '@/lib/db/collections';
+import { getSystemItemTypesWithCounts } from '@/lib/db/items';
+import { getCollections } from '@/lib/db/collections';
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [session, sidebarItemTypes, sidebarCollections] = await Promise.all([
-    auth(),
-    getDemoSystemItemTypesWithCounts(),
-    getDemoCollections(),
+  const session = await auth();
+  if (!session?.user?.id) redirect('/sign-in');
+
+  const userId = session.user.id;
+
+  const [sidebarItemTypes, sidebarCollections] = await Promise.all([
+    getSystemItemTypesWithCounts(userId),
+    getCollections(userId),
   ]);
 
   return (

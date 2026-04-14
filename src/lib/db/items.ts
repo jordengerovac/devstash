@@ -1,4 +1,3 @@
-import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 
 export interface ItemType {
@@ -115,35 +114,3 @@ export async function getSystemItemTypesWithCounts(userId: string): Promise<Side
   }));
 }
 
-// Temporary: uses demo user until auth is wired up
-const getDemoUserId = cache(async (): Promise<string | null> => {
-  const user = await prisma.user.findUnique({
-    where: { email: 'demo@devstash.io' },
-    select: { id: true },
-  });
-  return user?.id ?? null;
-});
-
-export async function getDemoPinnedItems(): Promise<ItemWithMeta[]> {
-  const userId = await getDemoUserId();
-  if (!userId) return [];
-  return getPinnedItems(userId);
-}
-
-export async function getDemoRecentItems(): Promise<ItemWithMeta[]> {
-  const userId = await getDemoUserId();
-  if (!userId) return [];
-  return getRecentItems(userId);
-}
-
-export async function getDemoDashboardStats(): Promise<DashboardStats> {
-  const userId = await getDemoUserId();
-  if (!userId) return { totalItems: 0, totalCollections: 0, favoriteItems: 0, favoriteCollections: 0 };
-  return getDashboardStats(userId);
-}
-
-export async function getDemoSystemItemTypesWithCounts(): Promise<SidebarItemType[]> {
-  const userId = await getDemoUserId();
-  if (!userId) return [];
-  return getSystemItemTypesWithCounts(userId);
-}

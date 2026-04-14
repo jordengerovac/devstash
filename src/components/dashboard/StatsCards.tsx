@@ -1,8 +1,8 @@
 import { Layers, FolderOpen, Star, Bookmark } from 'lucide-react';
-import { getDemoDashboardStats } from '@/lib/db/items';
+import { getDashboardStats } from '@/lib/db/items';
 
-export async function StatsCards() {
-  const data = await getDemoDashboardStats();
+export async function StatsCards({ userId }: { userId: string }) {
+  const data = await getDashboardStats(userId);
 
   const stats = [
     { label: 'Items', value: data.totalItems, icon: Layers },
