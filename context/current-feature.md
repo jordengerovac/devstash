@@ -26,3 +26,4 @@
 - **Auth Phase 3** — Custom /sign-in and /register pages, reusable UserAvatar component (image or initials), sidebar user section with real session data and sign-out dropdown (Completed)
 - **Email Verification** — Resend integration: verification token generated on register, email sent with 24h link, /api/auth/verify-email validates and marks emailVerified, /verify-email and /email-verified pages, credentials sign-in blocked until verified (Completed)
 - **Email Verification Toggle** — EMAIL_VERIFICATION_ENABLED env flag: when false, users are auto-verified on register and signIn skips the verified check; defaults to enabled (Completed)
+- **Forgot Password** — /forgot-password page + POST /api/auth/forgot-password sends Resend email with 1h reset link; /reset-password?token= validates VerificationToken (password-reset: prefix), updates hashed password, redirects to /sign-in with success banner; OAuth-only users silently skipped (Completed)
