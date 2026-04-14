@@ -1,5 +1,8 @@
+'use client';
+
 import { Star } from 'lucide-react';
 import { getItemTypeIcon } from '@/lib/item-type-icons';
+import { useItemDrawer } from '@/components/items/ItemDrawerContext';
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('en-US', {
@@ -31,11 +34,15 @@ interface ItemRowProps {
 }
 
 export function ItemRow({ item, itemTypes }: ItemRowProps) {
+  const { openItem } = useItemDrawer();
   const type = itemTypes.find((t) => t.id === item.typeId);
   const Icon = getItemTypeIcon(type?.icon);
 
   return (
-    <div className="flex items-start gap-3 py-3 px-4 hover:bg-muted/30 transition-colors cursor-pointer">
+    <div
+      className="flex items-start gap-3 py-3 px-4 hover:bg-muted/30 transition-colors cursor-pointer"
+      onClick={() => openItem(item.id)}
+    >
       <div
         className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
         style={{ backgroundColor: type ? `${type.color}20` : undefined }}

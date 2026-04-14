@@ -1,5 +1,8 @@
+'use client';
+
 import { Star } from 'lucide-react';
 import { getItemTypeIcon } from '@/lib/item-type-icons';
+import { useItemDrawer } from '@/components/items/ItemDrawerContext';
 import type { ItemWithMeta, ItemType } from '@/lib/db/items';
 
 function formatDate(dateStr: string) {
@@ -15,6 +18,7 @@ interface ItemCardProps {
 }
 
 export function ItemCard({ item, itemType }: ItemCardProps) {
+  const { openItem } = useItemDrawer();
   const Icon = getItemTypeIcon(itemType.icon);
   const borderColor = itemType.color ?? 'var(--border)';
 
@@ -22,6 +26,7 @@ export function ItemCard({ item, itemType }: ItemCardProps) {
     <div
       className="bg-card border border-border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer border-l-[3px]"
       style={{ borderLeftColor: borderColor }}
+      onClick={() => openItem(item.id)}
     >
       <div className="flex items-start gap-3 mb-2">
         <div

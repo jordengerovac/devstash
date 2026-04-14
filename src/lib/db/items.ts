@@ -105,6 +105,56 @@ export async function getItemsByType(
   return { items: items.map(mapItem), type: itemType };
 }
 
+export interface ItemDetail {
+  id: string;
+  title: string;
+  description: string | null;
+  content: string | null;
+  contentType: string;
+  url: string | null;
+  fileUrl: string | null;
+  fileName: string | null;
+  language: string | null;
+  isFavorite: boolean;
+  isPinned: boolean;
+  tags: string[];
+  collections: { id: string; name: string }[];
+  type: ItemType;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export async function getItemById(userId: string, itemId: string): Promise<ItemDetail | null> {
+  const item = await prisma.item.findFirst({
+    where: { id: itemId, userId },
+    include: {
+      type: true,
+      tags: { include: { tag: true } },
+      collections: { include: { collection: { select: { id: true, name: true } } } },
+    },
+  });
+  if (!item) return null;
+
+  return {
+    id: item.id,
+    title: item.title,
+    description: item.description,
+    content: item.content,
+    contentType: item.contentType,
+    url: item.url,
+    fileUrl: item.fileUrl,
+    fileName: item.fileName,
+    language: item.language,
+    isFavorite: item.isFavorite,
+    isPinned: item.isPinned,
+    tags: item.tags.map((t) => t.tag.name),
+    collections: item.collections.map((c) => ({ id: c.collection.id, name: c.collection.name })),
+    type: item.type,
+    createdAt: item.createdAt.toISOString(),
+    updatedAt: item.updatedAt.toISOString(),
+  };
+}
+
 export async function getSystemItemTypesWithCounts(userId: string): Promise<SidebarItemType[]> {
   const itemTypes = await prisma.itemType.findMany({
     where: { isSystem: true },
