@@ -155,6 +155,68 @@ export async function getItemById(userId: string, itemId: string): Promise<ItemD
   };
 }
 
+export async function updateItem(
+  userId: string,
+  itemId: string,
+  data: {
+    title: string;
+    description: string | null;
+    content: string | null;
+    url: string | null;
+    language: string | null;
+    tags: string[];
+  },
+): Promise<ItemDetail | null> {
+  const existing = await prisma.item.findFirst({ where: { id: itemId, userId } });
+  if (!existing) return null;
+
+  const updated = await prisma.item.update({
+    where: { id: itemId },
+    data: {
+      title: data.title,
+      description: data.description,
+      content: data.content,
+      url: data.url,
+      language: data.language,
+      tags: {
+        deleteMany: {},
+        create: data.tags.map((name) => ({
+          tag: {
+            connectOrCreate: {
+              where: { name },
+              create: { name },
+            },
+          },
+        })),
+      },
+    },
+    include: {
+      type: true,
+      tags: { include: { tag: true } },
+      collections: { include: { collection: { select: { id: true, name: true } } } },
+    },
+  });
+
+  return {
+    id: updated.id,
+    title: updated.title,
+    description: updated.description,
+    content: updated.content,
+    contentType: updated.contentType,
+    url: updated.url,
+    fileUrl: updated.fileUrl,
+    fileName: updated.fileName,
+    language: updated.language,
+    isFavorite: updated.isFavorite,
+    isPinned: updated.isPinned,
+    tags: updated.tags.map((t) => t.tag.name),
+    collections: updated.collections.map((c) => ({ id: c.collection.id, name: c.collection.name })),
+    type: updated.type,
+    createdAt: updated.createdAt.toISOString(),
+    updatedAt: updated.updatedAt.toISOString(),
+  };
+}
+
 export async function getSystemItemTypesWithCounts(userId: string): Promise<SidebarItemType[]> {
   const itemTypes = await prisma.itemType.findMany({
     where: { isSystem: true },
