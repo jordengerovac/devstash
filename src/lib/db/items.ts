@@ -217,6 +217,66 @@ export async function updateItem(
   };
 }
 
+export async function createItem(
+  userId: string,
+  data: {
+    typeId: string;
+    title: string;
+    description: string | null;
+    content: string | null;
+    url: string | null;
+    language: string | null;
+    tags: string[];
+  },
+): Promise<ItemDetail> {
+  const item = await prisma.item.create({
+    data: {
+      userId,
+      typeId: data.typeId,
+      title: data.title,
+      description: data.description,
+      content: data.content,
+      contentType: 'text',
+      url: data.url,
+      language: data.language,
+      tags: {
+        create: data.tags.map((name) => ({
+          tag: {
+            connectOrCreate: {
+              where: { name },
+              create: { name },
+            },
+          },
+        })),
+      },
+    },
+    include: {
+      type: true,
+      tags: { include: { tag: true } },
+      collections: { include: { collection: { select: { id: true, name: true } } } },
+    },
+  });
+
+  return {
+    id: item.id,
+    title: item.title,
+    description: item.description,
+    content: item.content,
+    contentType: item.contentType,
+    url: item.url,
+    fileUrl: item.fileUrl,
+    fileName: item.fileName,
+    language: item.language,
+    isFavorite: item.isFavorite,
+    isPinned: item.isPinned,
+    tags: item.tags.map((t) => t.tag.name),
+    collections: [],
+    type: item.type,
+    createdAt: item.createdAt.toISOString(),
+    updatedAt: item.updatedAt.toISOString(),
+  };
+}
+
 export async function deleteItem(userId: string, itemId: string): Promise<boolean> {
   const existing = await prisma.item.findFirst({ where: { id: itemId, userId } });
   if (!existing) return false;

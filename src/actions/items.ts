@@ -2,8 +2,49 @@
 
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { updateItem as dbUpdateItem, deleteItem as dbDeleteItem } from '@/lib/db/items';
+import { createItem as dbCreateItem, updateItem as dbUpdateItem, deleteItem as dbDeleteItem } from '@/lib/db/items';
 import type { ItemDetail } from '@/lib/db/items';
+
+const CreateItemSchema = z.object({
+  typeId: z.string().min(1, 'Type is required'),
+  title: z.string().trim().min(1, 'Title is required'),
+  description: z.string().nullable().optional(),
+  content: z.string().nullable().optional(),
+  url: z.preprocess(
+    (v) => (v == null || v === '' ? null : v),
+    z.string().url('Must be a valid URL').nullable(),
+  ),
+  language: z.string().nullable().optional(),
+  tags: z.array(z.string().trim().min(1)).default([]),
+});
+
+type CreateItemInput = z.infer<typeof CreateItemSchema>;
+
+export async function createItem(
+  data: CreateItemInput,
+): Promise<{ success: true; data: ItemDetail } | { success: false; error: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: 'Not authenticated' };
+  }
+
+  const parsed = CreateItemSchema.safeParse(data);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? 'Invalid input' };
+  }
+
+  const created = await dbCreateItem(session.user.id, {
+    typeId: parsed.data.typeId,
+    title: parsed.data.title,
+    description: parsed.data.description ?? null,
+    content: parsed.data.content ?? null,
+    url: parsed.data.url ?? null,
+    language: parsed.data.language ?? null,
+    tags: parsed.data.tags,
+  });
+
+  return { success: true, data: created };
+}
 
 const UpdateItemSchema = z.object({
   title: z.string().trim().min(1, 'Title is required'),

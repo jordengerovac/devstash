@@ -5,6 +5,7 @@ import { Search, FolderPlus, Plus, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sidebar } from './Sidebar';
+import { CreateItemDialog } from '@/components/items/CreateItemDialog';
 import type { SidebarItemType } from '@/lib/db/items';
 import type { CollectionWithMeta } from '@/lib/db/collections';
 
@@ -24,6 +25,9 @@ interface DashboardShellProps {
 export function DashboardShell({ children, sidebarItemTypes, sidebarCollections, user }: DashboardShellProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
+
+  const creatableTypes = sidebarItemTypes.filter((t) => !t.isPro);
 
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
@@ -64,7 +68,7 @@ export function DashboardShell({ children, sidebarItemTypes, sidebarCollections,
               <FolderPlus className="h-3.5 w-3.5" />
               New Collection
             </Button>
-            <Button size="sm" className="h-8 text-xs gap-1.5">
+            <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setCreateOpen(true)}>
               <Plus className="h-3.5 w-3.5" />
               New Item
             </Button>
@@ -74,6 +78,12 @@ export function DashboardShell({ children, sidebarItemTypes, sidebarCollections,
         {/* Main content */}
         <main className="flex-1 overflow-auto p-6">{children}</main>
       </div>
+
+      <CreateItemDialog
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        itemTypes={creatableTypes}
+      />
     </div>
   );
 }
