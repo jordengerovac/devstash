@@ -1,24 +1,10 @@
-# Current Feature: Item Delete
+# Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
 
-- Delete button in the item drawer triggers a ShadCN AlertDialog confirmation modal
-- Confirmation dialog shows item title and asks user to confirm deletion
-- On confirm, calls a `deleteItem` server action that removes the item from the DB
-- On success, closes the drawer and shows a success toast notification
-- On error, shows an error toast without closing the drawer
-
 ## Notes
-
-- Use ShadCN `AlertDialog` for the confirmation modal (destructive variant for the confirm button)
-- Use ShadCN `toast` (sonner) for success/error feedback
-- The `deleteItem` server action should live in `src/actions/items.ts`
-- After deletion, call `router.refresh()` to update the items list in the background
-- The Delete button already exists in the drawer action bar — wire it up
 
 ## History
 
@@ -47,3 +33,4 @@ In Progress
 - **Items List 3-Column Layout** — Items grid updated to `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`; 3 columns on lg+ screens, 2 on md, 1 on mobile (Completed)
 - **Item Drawer** — Right-side Sheet drawer opens on ItemCard/ItemRow click; fetches full item detail via GET /api/items/[id]; action bar (Favorite, Pin, Copy, Edit, Delete), description, content, tags, collections, dates, loading skeleton; ItemDrawerProvider + context wired into dashboard and items list pages (Completed)
 - **Item Drawer Edit Mode** — Inline edit mode in the item drawer: Edit toggles to editable inputs (title, description, tags, type-specific fields), Save/Cancel replace the action bar, updateItem server action with Zod validation, tag disconnect/reconnect, router.refresh() on save (Completed)
+- **Item Delete** — Delete button in item drawer triggers ShadCN AlertDialog confirmation; deleteItem server action with ownership check; success closes drawer and refreshes list with toast; error surfaces as toast without closing (Completed)
