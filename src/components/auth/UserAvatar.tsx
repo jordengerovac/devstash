@@ -1,7 +1,7 @@
 interface UserAvatarProps {
   name?: string | null
   image?: string | null
-  size?: "sm" | "md"
+  size?: "sm" | "md" | "lg"
 }
 
 function getInitials(name: string): string {
@@ -14,7 +14,7 @@ function getInitials(name: string): string {
 }
 
 export function UserAvatar({ name, image, size = "sm" }: UserAvatarProps) {
-  const sizeClass = size === "md" ? "w-8 h-8 text-sm" : "w-7 h-7 text-xs"
+  const sizeClass = size === "lg" ? "w-16 h-16 text-xl" : size === "md" ? "w-8 h-8 text-sm" : "w-7 h-7 text-xs"
 
   if (image) {
     return (

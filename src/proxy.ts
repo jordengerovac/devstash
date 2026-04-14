@@ -7,7 +7,10 @@ const { auth } = NextAuth(authConfig)
 export const proxy = auth(function proxy(req) {
   const isLoggedIn = !!req.auth
 
-  if (req.nextUrl.pathname.startsWith("/dashboard") && !isLoggedIn) {
+  const protectedPaths = ["/dashboard", "/profile"]
+  const isProtected = protectedPaths.some((p) => req.nextUrl.pathname.startsWith(p))
+
+  if (isProtected && !isLoggedIn) {
     return NextResponse.redirect(new URL("/sign-in", req.nextUrl))
   }
 
@@ -15,5 +18,5 @@ export const proxy = auth(function proxy(req) {
 })
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/profile/:path*"],
 }

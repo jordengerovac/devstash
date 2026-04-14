@@ -34,6 +34,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    session({ session, token }) {
+      session.user.id = token.sub!
+      return session
+    },
     async signIn({ user, account }) {
       // OAuth providers (e.g. GitHub) skip email verification
       if (account?.provider !== "credentials") return true
