@@ -1,26 +1,10 @@
-# Current Feature: Item Drawer
+# Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
 
-- Right-side slide-in drawer using shadcn Sheet component
-- Clicking an ItemCard opens the drawer with that item's full data
-- Works on both dashboard and items list pages
-- Action bar with: Favorite (star, yellow when active), Pin, Copy, Edit (pencil), Delete (trash, right-aligned)
-- Focus on drawer detail display only — code editor and item-specific extras come later
-- Client wrapper component to manage drawer state (pages are server components)
-- Snappy UX — fetch on click, no page navigation
-- Skeleton/loading state while fetching item detail
-
 ## Notes
-
-- Card data (title, description, tags) already fetched by server component — no change there
-- Full item detail (content, collections, language, etc.) fetched on click via `GET /api/items/[id]`
-- DB query function lives in `lib/db/items.ts`; API route calls it with auth check
-- See `context/screenshots/dashboard-ui-drawer.png` for visual reference
 
 ## History
 
@@ -47,3 +31,4 @@ In Progress
 - **Rate Limiting** — Upstash Redis sliding window rate limiting on register (3/1h), forgot-password (3/1h), reset-password (5/15min), and login via server action (5/15min IP+email); reusable src/lib/rate-limit.ts utility with fail-open behavior; 429 responses include Retry-After header (Completed)
 - **Items List View** — Dynamic `/items/[type]` route with type-filtered items grid: 2-col responsive ItemCard layout, left border colored by item type, getItemsByType() DB function, shared items layout with DashboardShell (Completed)
 - **Items List 3-Column Layout** — Items grid updated to `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`; 3 columns on lg+ screens, 2 on md, 1 on mobile (Completed)
+- **Item Drawer** — Right-side Sheet drawer opens on ItemCard/ItemRow click; fetches full item detail via GET /api/items/[id]; action bar (Favorite, Pin, Copy, Edit, Delete), description, content, tags, collections, dates, loading skeleton; ItemDrawerProvider + context wired into dashboard and items list pages (Completed)
