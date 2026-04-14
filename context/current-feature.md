@@ -1,10 +1,24 @@
-# Current Feature
+# Current Feature: Item Delete
 
 ## Status
 
+In Progress
+
 ## Goals
 
+- Delete button in the item drawer triggers a ShadCN AlertDialog confirmation modal
+- Confirmation dialog shows item title and asks user to confirm deletion
+- On confirm, calls a `deleteItem` server action that removes the item from the DB
+- On success, closes the drawer and shows a success toast notification
+- On error, shows an error toast without closing the drawer
+
 ## Notes
+
+- Use ShadCN `AlertDialog` for the confirmation modal (destructive variant for the confirm button)
+- Use ShadCN `toast` (sonner) for success/error feedback
+- The `deleteItem` server action should live in `src/actions/items.ts`
+- After deletion, call `router.refresh()` to update the items list in the background
+- The Delete button already exists in the drawer action bar — wire it up
 
 ## History
 
