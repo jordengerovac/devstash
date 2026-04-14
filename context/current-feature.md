@@ -1,31 +1,10 @@
-# Current Feature: Item Drawer — Edit Mode
+# Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
 
-- Edit button in item drawer action bar switches the drawer to inline edit mode
-- In edit mode, action bar is replaced with Save and Cancel buttons
-- Cancel discards changes and returns to view mode
-- Save persists changes via server action, returns to view mode, refreshes drawer data, and shows a toast
-- All types: title (required), description, and tags are editable
-- Type-specific: content textarea (snippet, prompt, command, note), language input (snippet, command), URL input (link)
-- Item type, collections, and dates are display-only in edit mode
-- Zod validation in server action (`updateItem` in `src/actions/items.ts`)
-- `updateItem` query function in `lib/db/items.ts` handles tag disconnect/reconnect and returns updated `ItemDetail`
-- `router.refresh()` called after save so underlying card list reflects changes
-
 ## Notes
-
-- No form library — controlled inputs with local state
-- Disable Save button client-side when title is empty
-- Content textarea does not need to be a code editor
-- Server action follows `{ success, data, error }` return pattern
-- Validate ownership in server action via `auth()` session
-- Tag handling: disconnect all existing tags, connect-or-create new ones on update
-- Return Zod errors in `{ success: false, error }` so client can display field-level messages
 
 ## History
 
@@ -53,3 +32,4 @@ In Progress
 - **Items List View** — Dynamic `/items/[type]` route with type-filtered items grid: 2-col responsive ItemCard layout, left border colored by item type, getItemsByType() DB function, shared items layout with DashboardShell (Completed)
 - **Items List 3-Column Layout** — Items grid updated to `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`; 3 columns on lg+ screens, 2 on md, 1 on mobile (Completed)
 - **Item Drawer** — Right-side Sheet drawer opens on ItemCard/ItemRow click; fetches full item detail via GET /api/items/[id]; action bar (Favorite, Pin, Copy, Edit, Delete), description, content, tags, collections, dates, loading skeleton; ItemDrawerProvider + context wired into dashboard and items list pages (Completed)
+- **Item Drawer Edit Mode** — Inline edit mode in the item drawer: Edit toggles to editable inputs (title, description, tags, type-specific fields), Save/Cancel replace the action bar, updateItem server action with Zod validation, tag disconnect/reconnect, router.refresh() on save (Completed)
